@@ -32,7 +32,6 @@ async function searchImages(query) {
 // Function to render image cards
 function renderImages(images) {
     const gallery = document.querySelector('.gallery');
-    gallery.innerHTML = ''; 
     images.forEach(image => {
         const card = document.createElement('div');
         card.classList.add('photo-card');
@@ -41,10 +40,10 @@ function renderImages(images) {
                 <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
             </a>
             <div class="info">
-                <p class="info-item"><b>Likes:</b><br/> ${image.likes}</p>
-                <p class="info-item"><b>Views:</b><br/> ${image.views}</p>
-                <p class="info-item"><b>Comments:</b><br/> ${image.comments}</p>
-                <p class="info-item"><b>Downloads:</b><br/> ${image.downloads}</p>
+                <p class="info-item"><b>Likes</b> ${image.likes}</p>
+                <p class="info-item"><b>Views</b> ${image.views}</p>
+                <p class="info-item"><b>Comments</b> ${image.comments}</p>
+                <p class="info-item"><b>Downloads</b> ${image.downloads}</p>
             </div>
         `;
         gallery.appendChild(card);
@@ -94,6 +93,17 @@ searchForm.addEventListener('submit', async (event) => {
 });
 
 // Event listener for the "Load more" button
-loadMoreButton.addEventListener('click', loadMoreImages);
+loadMoreButton.addEventListener('click', async () => {
+    if (isGalleryLoaded) {
+        const images = await searchImages(currentQuery);
+        if (images.length === 0) {
+            loadMoreButton.style.display = 'none';
+            Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+        } else {
+            loadMoreImages(images);
+            scrollToNextGroup();
+        }
+    }
+});
 
 
