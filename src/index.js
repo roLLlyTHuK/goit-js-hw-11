@@ -8,9 +8,11 @@ const perPage = 40;
 let currentPage = 1;
 let currentQuery = '';
 let isGalleryLoaded = false;
-
+const searchForm = document.querySelector('#search-form');
+const gallery = document.querySelector('.gallery');
 const loadMoreButton = document.querySelector('.load-more');
 loadMoreButton.style.display = 'none';
+
 // Initialize SimpleLightbox
 const lightbox = new SimpleLightbox('.gallery a',{
     close: false,
@@ -31,7 +33,6 @@ async function searchImages(query) {
 
 // Function to render image cards
 function renderImages(images) {
-    const gallery = document.querySelector('.gallery');
     images.forEach(image => {
         const card = document.createElement('div');
         card.classList.add('photo-card');
@@ -54,7 +55,6 @@ function renderImages(images) {
 }
 
 
-
 // Function to load more images
 async function loadMoreImages() {
     currentPage++;
@@ -70,7 +70,7 @@ async function loadMoreImages() {
 
 // Function to scroll to the next group of images
 function scrollToNextGroup() {
-    const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+    const { height: cardHeight } = gallery.firstElementChild.getBoundingClientRect();
     window.scrollBy({
         top: cardHeight * 2,
         behavior: "smooth",
@@ -78,9 +78,9 @@ function scrollToNextGroup() {
 }
 
 // Event listener for the search form
-const searchForm = document.querySelector('#search-form');
 searchForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    removePhotoCards();
     currentPage = 1;
     currentQuery = event.target.searchQuery.value.trim();
     const images = await searchImages(currentQuery);
@@ -106,4 +106,14 @@ loadMoreButton.addEventListener('click', async () => {
     }
 });
 
+//! знищуємо галлерею 
+function removePhotoCards() {
+    const photoCards = document.querySelectorAll('.photo-card');
+    photoCards.forEach(card => {
+        gallery.removeChild(card);
+    });
+    // Сброс флага загрузки галереи и скрытие кнопки "Load more"
+    isGalleryLoaded = false;
+    loadMoreButton.style.display = 'none';
+}
 
