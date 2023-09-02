@@ -27,8 +27,7 @@ body {
     margin: 0 auto 1rem;
     gap: 1rem;
     background-color: #007bff;
-    
-}
+ }
 
 input[type="text"] {
     padding: 0.5rem;
@@ -46,10 +45,11 @@ button[type="submit"] {
     font-size: 1rem;
     cursor: pointer;
 }
+
 input[type="text"]:focus{
    outline-color: #007bff;
-
 }
+
 button.load-more {
     display: none;
     background-color: #007bff;
@@ -67,7 +67,6 @@ button.load-more {
     justify-content: center;
     flex-wrap: wrap;
     gap: 1rem;
-    
 }
 
 .photo-card {
@@ -79,7 +78,6 @@ button.load-more {
     border: 1px solid #ccc;
     padding: 0.5rem;
     border-radius: 4px;
-    /* background-color: #ccc; */
 }
 
 .photo-card img {
@@ -103,5 +101,4 @@ button.load-more {
     margin: 0;
     font-size: 1rem;
     border-radius: 4px;
-    /* background-color: #ccc; */
 }

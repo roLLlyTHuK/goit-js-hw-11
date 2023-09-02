@@ -109,7 +109,7 @@ loadMoreButton.addEventListener('click', async () => {
     }
 });
 
-//! знищуємо картки та оновлюємо статус кнопки 
+//! скидання галлереї та кнопки loadMoreButton
 function removePhotoCards() {
     const photoCards = document.querySelectorAll('.photo-card');
     photoCards.forEach(card => {
