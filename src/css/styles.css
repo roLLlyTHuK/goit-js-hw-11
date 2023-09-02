@@ -46,7 +46,10 @@ button[type="submit"] {
     font-size: 1rem;
     cursor: pointer;
 }
+input[type="text"]:focus{
+   outline-color: #007bff;
 
+}
 button.load-more {
     display: none;
     background-color: #007bff;

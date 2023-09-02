@@ -13,13 +13,12 @@ const gallery = document.querySelector('.gallery');
 const loadMoreButton = document.querySelector('.load-more');
 loadMoreButton.style.display = 'none';
 
-// Initialize SimpleLightbox
+//!стволюємо екземпляр SimpleLightbox
 const lightbox = new SimpleLightbox('.gallery a',{
-    close: false,
     enableKeyboard: true,
 });
 
-// Function to make an API request
+//! робимо запит картинок 
 async function searchImages(query) {
     try {
         const response = await axios.get(`https://pixabay.com/api/?key=${apiKey}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${currentPage}&per_page=${perPage}`);
@@ -31,7 +30,7 @@ async function searchImages(query) {
     }
 }
 
-// Function to render image cards
+//! створюємо вміст галлереї
 function renderImages(images) {
     images.forEach(image => {
         const card = document.createElement('div');
@@ -55,7 +54,7 @@ function renderImages(images) {
 }
 
 
-// Function to load more images
+//! додаткове завантаження картинок
 async function loadMoreImages() {
     currentPage++;
     const images = await searchImages(currentQuery);
@@ -68,7 +67,7 @@ async function loadMoreImages() {
     scrollToNextGroup();
 }
 
-// Function to scroll to the next group of images
+//! плавний скролл до нових картинок
 function scrollToNextGroup() {
     const { height: cardHeight } = gallery.firstElementChild.getBoundingClientRect();
     window.scrollBy({
@@ -77,12 +76,16 @@ function scrollToNextGroup() {
     });
 }
 
-// Event listener for the search form
+//! обробник пошуку з логікою на оновлення галлереї в разі зміни слова пошуку
+let previousQuery = '';
 searchForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    removePhotoCards();
     currentPage = 1;
     currentQuery = event.target.searchQuery.value.trim();
+    if (currentQuery !== previousQuery) {
+        removePhotoCards();
+    } 
+    previousQuery = currentQuery;
     const images = await searchImages(currentQuery);
     if (images.length === 0) {
         Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
@@ -92,7 +95,7 @@ searchForm.addEventListener('submit', async (event) => {
     }
 });
 
-// Event listener for the "Load more" button
+//! завантаження нових вото
 loadMoreButton.addEventListener('click', async () => {
     if (isGalleryLoaded) {
         const images = await searchImages(currentQuery);
@@ -106,13 +109,12 @@ loadMoreButton.addEventListener('click', async () => {
     }
 });
 
-//! знищуємо галлерею 
+//! знищуємо картки та оновлюємо статус кнопки 
 function removePhotoCards() {
     const photoCards = document.querySelectorAll('.photo-card');
     photoCards.forEach(card => {
         gallery.removeChild(card);
     });
-    // Сброс флага загрузки галереи и скрытие кнопки "Load more"
     isGalleryLoaded = false;
     loadMoreButton.style.display = 'none';
 }
