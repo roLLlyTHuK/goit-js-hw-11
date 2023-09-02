@@ -16,8 +16,8 @@ t(r)(t(s).mark((function e(){var n;return t(s).wrap((function(e){for(;;)switch(e
 function ro(){var t=Kn.firstElementChild.getBoundingClientRect().height;window.scrollBy({top:2*t,behavior:"smooth"})}
 //! обробник пошуку з логікою на оновлення галлереї в разі зміни слова пошуку
 var ao,so="";
-//! знищуємо картки та оновлюємо статус кнопки 
+//! скидання галлереї та кнопки loadMoreButton
 function lo(){document.querySelectorAll(".photo-card").forEach((function(t){Kn.removeChild(t)})),Gn=!1,Qn.style.display="none"}Zn.addEventListener("submit",(ao=t(r)(t(s).mark((function e(n){var o;return t(s).wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return n.preventDefault(),Vn=1,(Jn=n.target.searchQuery.value.trim())!==so&&lo(),so=Jn,e.next=7,to(Jn);case 7:0===(o=e.sent).length?t(Mn).Notify.failure("Sorry, there are no images matching your search query. Please try again."):(no(o),t(Mn).Notify.success("Hooray! We found ".concat(o.length," images.")));case 9:case"end":return e.stop()}}),e)}))),function(t){return ao.apply(this,arguments)})),
 //! завантаження нових вото
 Qn.addEventListener("click",t(r)(t(s).mark((function e(){var n;return t(s).wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(!Gn){e.next=5;break}return e.next=3,to(Jn);case 3:0===(n=e.sent).length?(Qn.style.display="none",t(Mn).Notify.info("We're sorry, but you've reached the end of search results.")):(oo(n),ro());case 5:case"end":return e.stop()}}),e)}))))}();
-//# sourceMappingURL=index.9a56728f.js.map
+//# sourceMappingURL=index.e5e0a1c9.js.map
