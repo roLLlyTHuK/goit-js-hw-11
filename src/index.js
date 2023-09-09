@@ -13,6 +13,15 @@ const gallery = document.querySelector('.gallery');
 const loadMoreButton = document.querySelector('.load-more');
 loadMoreButton.style.display = 'none';
 
+//!loader
+const loader = document.querySelector('.loader');
+function showLoader() {
+    loader.style.display = 'block';
+}
+function hideLoader() {
+    loader.style.display = 'none';
+}
+
 //!стволюємо екземпляр SimpleLightbox
 const lightbox = new SimpleLightbox('.gallery a',{
     enableKeyboard: true,
@@ -90,7 +99,9 @@ searchForm.addEventListener('submit', async (event) => {
         removePhotoCards();
     } 
     previousQuery = currentQuery;
-    const images = await searchImages(currentQuery);
+    showLoader();
+    const images = await searchImages(currentQuery)
+    hideLoader();
     if (images.length === 0) {
         Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
     } else {
