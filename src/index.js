@@ -80,8 +80,12 @@ function scrollToNextGroup() {
 let previousQuery = '';
 searchForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    currentPage = 1;
     currentQuery = event.target.searchQuery.value.trim();
+    if (currentQuery === '') {
+        Notiflix.Notify.warning('Please enter a search query.');
+        return;
+    }
+    currentPage = 1;
     if (currentQuery !== previousQuery) {
         removePhotoCards();
     } 
