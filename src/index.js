@@ -1,7 +1,10 @@
 import axios from 'axios';
-import Notiflix from 'notiflix';
+// import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import Swal from 'sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
+
 
 const apiKey = '39198737-e441a494d9c878a4c9c462200';
 const perPage = 40;
@@ -69,7 +72,12 @@ async function loadMoreImages() {
     const images = await searchImages(currentQuery);
     if (images.length === 0) {
         loadMoreButton.style.display = 'none';
-        Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+        // Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong!',
+            });
         return;
     }
     renderImages(images);
@@ -91,7 +99,12 @@ searchForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     currentQuery = event.target.searchQuery.value.trim();
     if (currentQuery === '') {
-        Notiflix.Notify.warning('Please enter a search query.');
+        // Notiflix.Notify.warning('Please enter a search query.');
+        Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  text: 'Your search is empty!!!',
+  })
         return;
     }
     currentPage = 1;
@@ -103,10 +116,24 @@ searchForm.addEventListener('submit', async (event) => {
     const images = await searchImages(currentQuery)
     hideLoader();
     if (images.length === 0) {
-        Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+        // Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
+        Swal.fire({
+  icon: 'error',
+  title: 'Oops...',
+  text: 'Sorry, there are no images matching your search query. Please try again.',
+  
+})
     } else {
         renderImages(images);
-        Notiflix.Notify.success(`Hooray! We found ${images.length} images.`);
+        // Notiflix.Notify.success(`Hooray! We found ${images.length} images.`);
+        const text = `Hooray! We found ${images.length} images.`
+        Swal.fire({
+  position: 'center',
+  icon: 'success',
+  title: text,
+  showConfirmButton: false,
+  timer: 2000
+})
     }
 });
 
