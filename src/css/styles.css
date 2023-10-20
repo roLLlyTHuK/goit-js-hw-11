@@ -43,7 +43,7 @@ input[type="text"]:focus{
    outline-offset: -2px;
    }
 
-button.load-more {
+/* button.load-more {
     display: none;
     width: 5rem;
     height: 5rem;
@@ -60,7 +60,7 @@ button.load-more {
 }
 button.load-more:hover {
     transform: scale(1.5);
-}
+} */
 .gallery {
     display: flex;
     justify-content: center;

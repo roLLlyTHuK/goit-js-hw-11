@@ -117,10 +117,10 @@ searchForm.addEventListener('submit', async (event) => {
     if (currentQuery === '') {
         // Notiflix.Notify.warning('Please enter a search query.');
         Swal.fire({
-  icon: 'error',
-  title: 'Oops...',
-  text: 'Your search is empty!!!',
-  })
+            icon: 'warning',
+            title: 'Oops...',
+            text: 'Your search is empty!!!',
+        })
         return;
     }
     currentPage = 1;
@@ -134,23 +134,23 @@ searchForm.addEventListener('submit', async (event) => {
     if (images.length === 0) {
         // Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
         Swal.fire({
-  icon: 'error',
-  title: 'Oops...',
-  text: 'Sorry, there are no images matching your search query. Please try again.',
+            icon: 'error',
+            title: 'Sorry',
+            text: 'There are no images matching your search query. Please try again.',
   
-})
+        })
     } else {
         renderImages(images);
         // Notiflix.Notify.success(`Hooray! We found ${images.length} images.`);
         const text = `Hooray! We found ${images.length} images.`
         Swal.fire({
-  position: 'center',
-  icon: 'success',
+            position: 'top-end',
+            icon: 'success',
             title: text,
-  width: '400px',
-  showConfirmButton: false,
-  timer: 1000
-})
+            width: '400px',
+            showConfirmButton: false,
+            timer: 1000
+        })
     }
 });
 
