@@ -1,5 +1,4 @@
 import axios from 'axios';
-// import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import Swal from 'sweetalert2';
@@ -13,8 +12,6 @@ let currentQuery = '';
 let isGalleryLoaded = false;
 const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-// const loadMoreButton = document.querySelector('.load-more');
-// loadMoreButton.style.display = 'none';
 const guard = document.querySelector('.js-guard');
 //!observer
 const options = {
@@ -39,7 +36,6 @@ function hideLoader() {
     loader.style.display = 'none';
 }
 
-//!стволюємо екземпляр SimpleLightbox
 const lightbox = new SimpleLightbox('.gallery a',{
     enableKeyboard: true,
 });
@@ -48,12 +44,18 @@ const lightbox = new SimpleLightbox('.gallery a',{
 async function searchImages(query) {
     try {
         const response = await axios.get(`https://pixabay.com/api/?key=${apiKey}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${currentPage}&per_page=${perPage}`);
+       
         const data = response.data;
         return data.hits;
     } catch (error) {
         console.error('Error fetching data:', error);
+        redirectTo404Page();
         return [];
     }
+}
+function redirectTo404Page() {
+    // window.location.href = '404.html';
+    window.open('404.html', '_blank');
 }
 
 //! створюємо вміст галлереї
@@ -76,7 +78,6 @@ function renderImages(images) {
     });
     lightbox.refresh(); 
     isGalleryLoaded = true;
-    // loadMoreButton.style.display = 'block';
 }
 
 
@@ -86,15 +87,23 @@ async function loadMoreImages() {
     currentPage++;
     const images = await searchImages(currentQuery);
     if (images.length === 0) {
-      // Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
-      Swal.fire({
+        Swal.fire({
         icon: 'error',
         title: 'Oops...',
         text: "We're sorry, but you've reached the end of search results.",
       });
-      observer.unobserve(guard); // Отключаем наблюдение
+      observer.unobserve(guard); 
     } else {
-      renderImages(images);
+        renderImages(images);
+        const text = `Hooray! We found new ${images.length} images.`
+        Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: text,
+            width: '400px',
+            showConfirmButton: false,
+            timer: 1000
+        })
       scrollToNextGroup();
     }
   }
@@ -115,7 +124,6 @@ searchForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     currentQuery = event.target.searchQuery.value.trim();
     if (currentQuery === '') {
-        // Notiflix.Notify.warning('Please enter a search query.');
         Swal.fire({
             icon: 'warning',
             title: 'Oops...',
@@ -129,19 +137,17 @@ searchForm.addEventListener('submit', async (event) => {
     } 
     previousQuery = currentQuery;
     showLoader();
-    const images = await searchImages(currentQuery)
+    const images = await searchImages(currentQuery);
     hideLoader();
     if (images.length === 0) {
-        // Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
         Swal.fire({
             icon: 'error',
             title: 'Sorry',
-            text: 'There are no images matching your search query. Please try again.',
+            text: 'There are no images matching your search query. Please try another query.',
   
         })
     } else {
         renderImages(images);
-        // Notiflix.Notify.success(`Hooray! We found ${images.length} images.`);
         const text = `Hooray! We found ${images.length} images.`
         Swal.fire({
             position: 'top-end',
@@ -154,20 +160,6 @@ searchForm.addEventListener('submit', async (event) => {
     }
 });
 
-//! завантаження нових вото
-// loadMoreButton.addEventListener('click', async () => {
-//     if (isGalleryLoaded) {
-//         const images = await searchImages(currentQuery);
-//         if (images.length === 0) {
-//             loadMoreButton.style.display = 'none';
-//             Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
-//         } else {
-//             loadMoreImages(images);
-//             scrollToNextGroup();
-//         }
-//     }
-// });
-
 //! скидання галлереї та кнопки loadMoreButton
 function removePhotoCards() {
     const photoCards = document.querySelectorAll('.photo-card');
@@ -175,6 +167,23 @@ function removePhotoCards() {
         gallery.removeChild(card);
     });
     isGalleryLoaded = false;
-    // loadMoreButton.style.display = 'none';
 }
-
+const area = document.querySelector('.area');
+function renderBackground() {
+        const backgroundList = document.createElement('ul');
+        backgroundList.classList.add('circles');
+        backgroundList.innerHTML = `
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            `
+        area.appendChild(backgroundList);
+    };
+renderBackground();
