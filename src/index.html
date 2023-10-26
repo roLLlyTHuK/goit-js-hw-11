@@ -12,10 +12,28 @@
 
 <body>
   <header>
-    <form class="search-form" id="search-form">
-      <input type="text" name="searchQuery" autocomplete="off" placeholder="Search images..." />
-      <button type="submit"><i class="fa fa-search"></i></button>
-    </form>
+    <div class="logo">Finder on <span class="rainbow">Pixabay</span>.com</div>
+    <div class="form-container">
+      <form class="search-form" id="search-form">
+        <input type="text" name="searchQuery" autocomplete="off" placeholder="Search images..." />
+        <button type="submit"><i class="fa fa-search"></i></button>
+      </form>
+      <div class="toggle-container">
+        images
+        <label class="toggle">
+          <input class="toggle-input" type="checkbox" id="search-toggle">
+          <div class="toggle-bg">
+            <div class="toggle-sphere">
+              <div class="toggle-sphere-bg">
+              </div>
+              <div class="toggle-sphere-overlay"></div>
+            </div>
+          </div>
+        </label>
+        videos
+      </div>
+    </div>
+
   </header>
   <main>
     <div class="loader">

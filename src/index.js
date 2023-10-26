@@ -11,6 +11,7 @@ let currentPage = 1;
 let currentQuery = '';
 let isGalleryLoaded = false;
 const searchForm = document.querySelector('#search-form');
+const searchToggle = document.querySelector('#search-toggle');
 const gallery = document.querySelector('.gallery');
 const guard = document.querySelector('.js-guard');
 //!observer
@@ -22,7 +23,7 @@ const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
         
-      loadMoreImages();
+      loadMore();
     }
   });
 }, options);
@@ -53,12 +54,26 @@ async function searchImages(query) {
         return [];
     }
 }
+//! робимо запит відео
+async function searchVideos(query) {
+    try {
+        const response = await axios.get(`https://pixabay.com/api/videos/?key=${apiKey}&q=${query}&safesearch=false&page=${currentPage}&per_page=10`);
+       
+        const data = response.data;
+        return data.hits;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        redirectTo404Page();
+        return [];
+    }
+}
+
 function redirectTo404Page() {
     // window.location.href = '404.html';
     window.open('404.html', '_blank');
 }
 
-//! створюємо вміст галлереї
+//! створюємо вміст галлереї картинок
 function renderImages(images) {
     images.forEach(image => {
         const card = document.createElement('div');
@@ -79,35 +94,66 @@ function renderImages(images) {
     lightbox.refresh(); 
     isGalleryLoaded = true;
 }
-
+//! створюємо вміст галлереї відео
+function renderVideos(videos) {
+    videos.forEach(video => {
+        const card = document.createElement('div');
+        card.classList.add('video-card');
+        card.innerHTML = `
+  <iframe id="vimeo-player" src="${video.videos.tiny.url}" width="640" height="360" frameborder="0"
+    autoplay="false" allowfullscreen></iframe>
+            <div class="info">
+                <p class="info-item"><b>Likes</b></br> ${video.likes}</p>
+                <p class="info-item"><b>Views</b></br> ${video.views}</p>
+                <p class="info-item"><b>Comments</b></br> ${video.comments}</p>
+                <p class="info-item"><b>Downloads</b></br> ${video.downloads}</p>
+            </div>
+        `;
+        gallery.appendChild(card);
+    });
+    isGalleryLoaded = true;
+}
 
 //! додаткове завантаження картинок
-async function loadMoreImages() {
-  if (isGalleryLoaded) {
-    currentPage++;
-    const images = await searchImages(currentQuery);
-    if (images.length === 0) {
-        Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: "We're sorry, but you've reached the end of search results.",
-      });
-      observer.unobserve(guard); 
-    } else {
-        renderImages(images);
-        const text = `Hooray! We found new ${images.length} images.`
-        Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: text,
-            width: '400px',
-            showConfirmButton: false,
-            timer: 1000
-        })
-      scrollToNextGroup();
+async function loadMore() {
+    if (isGalleryLoaded) {
+        currentPage++;
+        showLoader();
+        
+        if (searchToggle.checked) {
+            const videos = await searchVideos(currentQuery);
+            if (videos.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: "We're sorry, but you've reached the end of search results for videos.",
+                });
+                observer.unobserve(guard);
+            } else {
+                // Обработка загруженных видео
+                renderVideos(videos);
+                scrollToNextGroup();
+            }
+        } else {
+            const images = await searchImages(currentQuery);
+            if (images.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: "We're sorry, but you've reached the end of search results for images.",
+                });
+                observer.unobserve(guard);
+            } else {
+                // Обработка загруженных изображений
+                renderImages(images);
+                scrollToNextGroup();
+            }
+        }
+        
+        hideLoader();
     }
-  }
 }
+
 
 //! плавний скролл до нових картинок
 function scrollToNextGroup() {
@@ -120,9 +166,11 @@ function scrollToNextGroup() {
 
 //! обробник пошуку з логікою на оновлення галлереї в разі зміни слова пошуку
 let previousQuery = '';
+let previousToggler= false;
 searchForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     currentQuery = event.target.searchQuery.value.trim();
+    currentToggler = event.target.checked;
     if (currentQuery === '') {
         Swal.fire({
             icon: 'warning',
@@ -132,38 +180,72 @@ searchForm.addEventListener('submit', async (event) => {
         return;
     }
     currentPage = 1;
-    if (currentQuery !== previousQuery) {
-        removePhotoCards();
+    if (currentQuery !== previousQuery || previousToggler !== currentToggler) {
+        removeCards();
     } 
     previousQuery = currentQuery;
     showLoader();
-    const images = await searchImages(currentQuery);
-    hideLoader();
-    if (images.length === 0) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Sorry',
-            text: 'There are no images matching your search query. Please try another query.',
-  
-        })
+       
+    if (searchToggle.checked) {
+        const videos = await searchVideos(currentQuery);
+        // Обработка результатов поиска видео
+           if (videos.length === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sorry',
+                text: 'There are no images matching your search query. Please try another query.',
+      
+            })
+        } else {
+            renderVideos(videos);
+            const text = `Hooray! We found ${videos.length} videos.`
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: text,
+                width: '400px',
+                showConfirmButton: false,
+                timer: 1000
+            })
+        }
     } else {
-        renderImages(images);
-        const text = `Hooray! We found ${images.length} images.`
-        Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: text,
-            width: '400px',
-            showConfirmButton: false,
-            timer: 1000
-        })
+        const images = await searchImages(currentQuery);
+        // Обработка результатов поиска изображений
+        if (images.length === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sorry',
+                text: 'There are no images matching your search query. Please try another query.',
+      
+            })
+        } else {
+            renderImages(images);
+            const text = `Hooray! We found ${images.length} images.`
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: text,
+                width: '400px',
+                showConfirmButton: false,
+                timer: 1000
+            })
+        }
     }
+
+    hideLoader();
 });
 
-//! скидання галлереї та кнопки loadMoreButton
-function removePhotoCards() {
+
+
+
+//! скидання галлереї
+function removeCards() {
     const photoCards = document.querySelectorAll('.photo-card');
+    const videoCards = document.querySelectorAll('.video-card');
     photoCards.forEach(card => {
+        gallery.removeChild(card);
+    });
+    videoCards.forEach(card => {
         gallery.removeChild(card);
     });
     isGalleryLoaded = false;
